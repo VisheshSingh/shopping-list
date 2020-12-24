@@ -154,7 +154,7 @@ function handleSubmit(e) {
 
 function displayItems() {
   var html = items.map(function (item) {
-    return "<li class='shopping-item'>\n    <input type='checkbox' />\n            <span class='itemName'>".concat(item.name, "</span>\n            <button value=").concat(item.id, " aria-label='Remove ").concat(item.name, "'>&times;</button>\n        </li>");
+    return "<li class='shopping-item'>\n            <input type='checkbox' value=".concat(item.id, " ").concat(item.checked ? 'checked' : '', " />\n            <span class='itemName'>").concat(item.name, "</span>\n            <button value=").concat(item.id, " aria-label='Remove ").concat(item.name, "'>&times;</button>\n        </li>");
   });
   list.innerHTML = html.join('');
 }
@@ -175,9 +175,19 @@ function restoreFromLocalStorage() {
 
 function deleteItem(id) {
   var filteredItems = items.filter(function (item) {
-    return item.id !== parseInt(id);
+    return item.id !== id;
   });
   items = _toConsumableArray(filteredItems);
+  list.dispatchEvent(new CustomEvent('itemsUpdated'));
+}
+
+function checkedOrNot(id) {
+  console.log(id);
+  var itemRef = items.find(function (item) {
+    return item.id === id;
+  });
+  console.log(itemRef);
+  itemRef.checked = !itemRef.checked;
   list.dispatchEvent(new CustomEvent('itemsUpdated'));
 }
 
@@ -185,8 +195,14 @@ shoppingForm.addEventListener('submit', handleSubmit);
 list.addEventListener('itemsUpdated', displayItems);
 list.addEventListener('itemsUpdated', saveToLocalStorage);
 list.addEventListener('click', function (e) {
+  var id = parseInt(e.target.value);
+
   if (e.target.matches('button')) {
-    deleteItem(e.target.value);
+    deleteItem(id);
+  }
+
+  if (e.target.matches('[type="checkbox"]')) {
+    checkedOrNot(id);
   }
 });
 restoreFromLocalStorage();

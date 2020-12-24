@@ -24,9 +24,13 @@ function handleSubmit(e) {
 function displayItems() {
   const html = items.map((item) => {
     return `<li class='shopping-item'>
-    <input type='checkbox' />
+            <input type='checkbox' value=${item.id} ${
+      item.checked ? 'checked' : ''
+    } />
             <span class='itemName'>${item.name}</span>
-            <button value=${item.id} aria-label='Remove ${item.name}'>&times;</button>
+            <button value=${item.id} aria-label='Remove ${
+      item.name
+    }'>&times;</button>
         </li>`;
   });
   list.innerHTML = html.join('');
@@ -43,17 +47,30 @@ function restoreFromLocalStorage() {
 }
 
 function deleteItem(id) {
-  const filteredItems = items.filter((item) => item.id !== parseInt(id));
+  const filteredItems = items.filter((item) => item.id !== id);
   items = [...filteredItems];
+  list.dispatchEvent(new CustomEvent('itemsUpdated'));
+}
+
+function checkedOrNot(id) {
+  console.log(id);
+  const itemRef = items.find((item) => item.id === id);
+  console.log(itemRef);
+  itemRef.checked = !itemRef.checked;
   list.dispatchEvent(new CustomEvent('itemsUpdated'));
 }
 
 shoppingForm.addEventListener('submit', handleSubmit);
 list.addEventListener('itemsUpdated', displayItems);
 list.addEventListener('itemsUpdated', saveToLocalStorage);
+
 list.addEventListener('click', (e) => {
+  const id = parseInt(e.target.value);
   if (e.target.matches('button')) {
-    deleteItem(e.target.value);
+    deleteItem(id);
+  }
+  if (e.target.matches('[type="checkbox"]')) {
+    checkedOrNot(id);
   }
 });
 restoreFromLocalStorage();
