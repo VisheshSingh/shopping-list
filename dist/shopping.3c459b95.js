@@ -137,8 +137,7 @@ function handleSubmit(e) {
   };
   items.push(item);
   e.target.reset();
-  console.log(items);
-  displayItems();
+  list.dispatchEvent(new CustomEvent('itemsUpdated'));
 }
 
 function displayItems() {
@@ -149,6 +148,7 @@ function displayItems() {
 }
 
 shoppingForm.addEventListener('submit', handleSubmit);
+list.addEventListener('itemsUpdated', displayItems);
 },{}],"../../../AppData/Roaming/nvm/v14.14.0/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';

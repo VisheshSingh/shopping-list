@@ -14,10 +14,11 @@ function handleSubmit(e) {
     id: Date.now(),
     checked: false,
   };
+
   items.push(item);
   e.target.reset();
-  console.log(items);
-  displayItems();
+
+  list.dispatchEvent(new CustomEvent('itemsUpdated'));
 }
 
 function displayItems() {
@@ -32,3 +33,4 @@ function displayItems() {
 }
 
 shoppingForm.addEventListener('submit', handleSubmit);
+list.addEventListener('itemsUpdated', displayItems);
