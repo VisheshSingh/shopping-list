@@ -154,7 +154,7 @@ function handleSubmit(e) {
 
 function displayItems() {
   var html = items.map(function (item) {
-    return "<li class='shopping-item'>\n    <input type='checkbox' />\n            <span class='itemName'>".concat(item.name, "</span>\n            <button aria-label='Remove ").concat(item.name, "'>&times;</button>\n        </li>");
+    return "<li class='shopping-item'>\n    <input type='checkbox' />\n            <span class='itemName'>".concat(item.name, "</span>\n            <button value=").concat(item.id, " aria-label='Remove ").concat(item.name, "'>&times;</button>\n        </li>");
   });
   list.innerHTML = html.join('');
 }
@@ -164,14 +164,31 @@ function saveToLocalStorage() {
 }
 
 function restoreFromLocalStorage() {
+  var _items;
+
   var lsItems = JSON.parse(localStorage.getItem('items'));
-  items.push.apply(items, _toConsumableArray(lsItems));
+
+  (_items = items).push.apply(_items, _toConsumableArray(lsItems));
+
+  list.dispatchEvent(new CustomEvent('itemsUpdated'));
+}
+
+function deleteItem(id) {
+  var filteredItems = items.filter(function (item) {
+    return item.id !== parseInt(id);
+  });
+  items = _toConsumableArray(filteredItems);
   list.dispatchEvent(new CustomEvent('itemsUpdated'));
 }
 
 shoppingForm.addEventListener('submit', handleSubmit);
 list.addEventListener('itemsUpdated', displayItems);
 list.addEventListener('itemsUpdated', saveToLocalStorage);
+list.addEventListener('click', function (e) {
+  if (e.target.matches('button')) {
+    deleteItem(e.target.value);
+  }
+});
 restoreFromLocalStorage();
 },{}],"../../../AppData/Roaming/nvm/v14.14.0/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];

@@ -1,7 +1,7 @@
 const shoppingForm = document.querySelector('.shopping');
 const list = document.querySelector('.list');
 
-const items = [];
+let items = [];
 
 function handleSubmit(e) {
   e.preventDefault();
@@ -26,7 +26,7 @@ function displayItems() {
     return `<li class='shopping-item'>
     <input type='checkbox' />
             <span class='itemName'>${item.name}</span>
-            <button aria-label='Remove ${item.name}'>&times;</button>
+            <button value=${item.id} aria-label='Remove ${item.name}'>&times;</button>
         </li>`;
   });
   list.innerHTML = html.join('');
@@ -42,8 +42,18 @@ function restoreFromLocalStorage() {
   list.dispatchEvent(new CustomEvent('itemsUpdated'));
 }
 
+function deleteItem(id) {
+  const filteredItems = items.filter((item) => item.id !== parseInt(id));
+  items = [...filteredItems];
+  list.dispatchEvent(new CustomEvent('itemsUpdated'));
+}
+
 shoppingForm.addEventListener('submit', handleSubmit);
 list.addEventListener('itemsUpdated', displayItems);
 list.addEventListener('itemsUpdated', saveToLocalStorage);
-
+list.addEventListener('click', (e) => {
+  if (e.target.matches('button')) {
+    deleteItem(e.target.value);
+  }
+});
 restoreFromLocalStorage();
