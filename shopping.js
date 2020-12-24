@@ -24,7 +24,7 @@ function handleSubmit(e) {
 function displayItems() {
   const html = items.map((item) => {
     return `<li class='shopping-item'>
-            <input type='checkbox' />
+    <input type='checkbox' />
             <span class='itemName'>${item.name}</span>
             <button aria-label='Remove ${item.name}'>&times;</button>
         </li>`;
@@ -32,5 +32,18 @@ function displayItems() {
   list.innerHTML = html.join('');
 }
 
+function saveToLocalStorage() {
+  localStorage.setItem('items', JSON.stringify(items));
+}
+
+function restoreFromLocalStorage() {
+  const lsItems = JSON.parse(localStorage.getItem('items'));
+  items.push(...lsItems);
+  list.dispatchEvent(new CustomEvent('itemsUpdated'));
+}
+
 shoppingForm.addEventListener('submit', handleSubmit);
 list.addEventListener('itemsUpdated', displayItems);
+list.addEventListener('itemsUpdated', saveToLocalStorage);
+
+restoreFromLocalStorage();
